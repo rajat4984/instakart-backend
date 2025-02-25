@@ -67,7 +67,6 @@ router.get("/search", async (req, res) => {
   }
 });
 
-
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,5 +83,49 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Update a customer by ID
+router.put("/:id", async (req, res) => {
+  try {
+    const updates = req.body;
+    const customerId = req.params.id;
 
+    // Validate customer existence
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ error: "Customer not found" });
+    }
+
+    // Ensure unique mobile number
+    if (
+      updates.mobileNumber &&
+      updates.mobileNumber !== customer.mobileNumber
+    ) {
+      const existingCustomer = await Customer.findOne({
+        mobileNumber: updates.mobileNumber,
+      });
+      if (existingCustomer) {
+        return res.status(400).json({ error: "Mobile number already exists" });
+      }
+    }
+
+    // Ensure unique email (if provided)
+    if (updates.email && updates.email !== customer.email) {
+      const existingEmail = await Customer.findOne({ email: updates.email });
+      if (existingEmail) {
+        return res.status(400).json({ error: "Email already exists" });
+      }
+    }
+
+    // Update the customer
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      customerId,
+      updates,
+      { new: true }
+    );
+
+    res.json(updatedCustomer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;
