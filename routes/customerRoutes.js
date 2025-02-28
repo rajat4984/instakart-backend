@@ -1,7 +1,7 @@
-const express = require("express");
-const Customer = require("../models/Customer");
+import { Router } from "express";
+import Customer from "../models/Customer.js";
 
-const router = express.Router();
+const router = Router();
 
 // Create a new customer
 router.post("/", async (req, res) => {
@@ -24,4 +24,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

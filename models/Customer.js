@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const customerSchema = new mongoose.Schema({
+const customerSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: false }, // Optional
   mobileNumber: { type: String, required: true },
@@ -10,6 +10,6 @@ const customerSchema = new mongoose.Schema({
   pincode: { type: String, required: false }, // Optional
 });
 
-const Customer = mongoose.model("Customer", customerSchema);
+const Customer = model("Customer", customerSchema);
 
-module.exports = Customer;
+export default Customer;
