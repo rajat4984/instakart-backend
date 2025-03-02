@@ -7,7 +7,7 @@ dotenv.config();
 // Signup
 export async function register(req, res) {
   try {
-    const { name, email, mobile, password } = req.body;
+    const { name, email, mobile, password, businessName } = req.body;
 
     if (!email && !mobile) {
       return res.status(400).json({ message: "Email or Mobile is required" });
@@ -17,7 +17,13 @@ export async function register(req, res) {
     if (user) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await hash(password, 10);
-    user = new User({ name, email, mobile, password: hashedPassword });
+    user = new User({
+      name,
+      email,
+      mobile,
+      password: hashedPassword,
+      businessName,
+    });
 
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
@@ -31,17 +37,27 @@ export async function login(req, res) {
   try {
     const { email, mobile, password } = req.body;
 
+    // Ensure at least one identifier (email or mobile) is provided
     if (!email && !mobile) {
       return res.status(400).json({ message: "Email or Mobile is required" });
     }
 
-    const user = await User.findOne({ $or: [{ email }, { mobile }] });
-    if (!user) return res.status(400).json({ message: "User not found" });
+    // Find user by email or mobile
+    const user = await User.findOne({
+      $or: email ? [{ email }] : mobile ? [{ mobile }] : [],
+    });
 
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Check if the password is correct
     const isMatch = await compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
 
+    // Generate JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
