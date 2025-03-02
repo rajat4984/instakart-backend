@@ -1,27 +1,17 @@
-const express = require("express");
-const Customer = require("../models/Customer");
+import express, { Router } from "express";
 
-const router = express.Router();
+import {
+  deleteCustomer,
+  getSingleCustomer,
+  getAllCustomer,
+  createCustomer,
+} from "../controller/customerController.js";
 
-// Create a new customer
-router.post("/", async (req, res) => {
-  try {
-    const customer = new Customer(req.body);
-    await customer.save();
-    res.status(201).json(customer);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+const router = Router();
 
-// Get all customers
-router.get("/", async (req, res) => {
-  try {
-    const customers = await Customer.find();
-    res.json(customers);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post("/", createCustomer);
+router.get("/", getAllCustomer);
+router.get("/search", getSingleCustomer);
+router.delete("/:id", deleteCustomer);
 
-module.exports = router;
+export default router;
