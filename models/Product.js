@@ -1,14 +1,32 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema({
-  productImage: { type: String, required: true },
-  productName: { type: String, required: true, unique: true }, // Unique constraint added
-  productDescription: { type: String },
-  productPrice: { type: Number, required: true },
-  productSalePrice: { type: Number },
-  productQuantity: { type: Number, required: true },
-  productCurrentQuantity: { type: Number, default: function () { return this.productQuantity; } } 
+const VariantSchema = new mongoose.Schema({
+  optionName: String,
+  optionValue: String,
 });
 
-const Product = mongoose.model("Product", productSchema);
-module.exports = Product;
+const ProductSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String },
+    mediaUrls: { type: [String], required: true },
+    price: { type: Number, required: true },
+    comparePrice: { type: Number },
+    cost: { type: Number },
+    margin: { type: Number },
+    tax: { type: Number },
+    profit: { type: Number },
+    SKU: { type: String },
+    status: { type: String, enum: ["active", "draft"], default: "draft" },
+    weight: { type: Number },
+    length: { type: Number },
+    breadth: { type: Number },
+    height: { type: Number },
+    variants: { type: [VariantSchema] }, // Array of Objects
+    tags: { type: [String] },
+    quantity: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Product", ProductSchema);

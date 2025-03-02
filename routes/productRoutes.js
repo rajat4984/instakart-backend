@@ -1,28 +1,17 @@
-const express = require("express");
-const Product = require("../models/Product");
-const {
+import express from "express";
+import {
+  getProducts,
   createProduct,
-  getSingleProduct,
-  getAllProducts,
   updateProduct,
   deleteProduct,
-} = require("../controllers/productController");
+} from "../controller/productController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ✅ 1️⃣ Create a new product
-router.post("/", createProduct);
+router.get("/", authMiddleware, getProducts); // Get product list
+router.post("/", authMiddleware, createProduct); // Create product
+router.put("/:id", authMiddleware, updateProduct); // Edit product
+router.delete("/:id", authMiddleware, deleteProduct); // Delete product
 
-// ✅ 2️⃣ Get all products
-router.get("/", getAllProducts);
-
-// ✅ 3️⃣ Get a single product by ID
-router.get("/:id", getSingleProduct);
-
-// Update a product by ID
-router.put("/:id", updateProduct);
-
-// ✅ 5️⃣ Delete a product by ID
-router.delete("/:id", deleteProduct);
-
-module.exports = router;
+export default router;

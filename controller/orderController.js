@@ -1,9 +1,9 @@
-const Order = require("../models/Order");
-const Customer = require("../models/Customer");
-const Product = require("../models/Product");
+import Order from "../models/Order.js";
+import Customer from "../models/Customer.js";
+import Product from "../models/Product.js"; 
 
 // Create Order
-const createOrder = async (req, res) => {
+export const createOrder = async (req, res) => {
   try {
     const { customerId, orderId, products, customerAddress, customerDetails } =
       req.body;
@@ -78,7 +78,7 @@ const createOrder = async (req, res) => {
   }
 };
 
-const getAllOrders = async (req, res) => {
+export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find(); // Fetch all orders without populating customer or product details
     res.status(200).json(orders);
@@ -87,9 +87,8 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-
 // Get Order by ID
-const getOrderById = async (req, res) => {
+export const getOrderById = async (req, res) => {
   try {
     const { orderId } = req.params;
 
@@ -107,9 +106,8 @@ const getOrderById = async (req, res) => {
   }
 };
 
-
 // Update Order
-const updateOrder = async (req, res) => {
+export const updateOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { products, customerAddress } = req.body;
@@ -139,7 +137,7 @@ const updateOrder = async (req, res) => {
 };
 
 // Delete Order
-const deleteOrder = async (req, res) => {
+export const deleteOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const deletedOrder = await Order.findOneAndDelete({ orderId });
@@ -154,11 +152,3 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-// Correctly Export All Controllers
-module.exports = {
-  createOrder,
-  getOrderById,
-  updateOrder,
-  deleteOrder,
-  getAllOrders
-};

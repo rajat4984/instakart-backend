@@ -1,6 +1,7 @@
-const Customer = require("../models/Customer");
+import Customer from "../models/Customer.js";  
+
 // Create a new customer
-const createCustomer = async (req, res) => {
+export const createCustomer = async (req, res) => {
   try {
     const { mobileNumber, email } = req.body;
 
@@ -28,7 +29,7 @@ const createCustomer = async (req, res) => {
 };
 
 // Get all customers
-const getAllCustomer = async (req, res) => {
+export const getAllCustomer = async (req, res) => {
   try {
     const customers = await Customer.find();
     res.json(customers);
@@ -38,7 +39,7 @@ const getAllCustomer = async (req, res) => {
 };
 
 // Get a single customer by mobile number or email
-const getSingleCustomer = async (req, res) => {
+export const getSingleCustomer = async (req, res) => {
   try {
     const { identifier } = req.query;
 
@@ -63,7 +64,7 @@ const getSingleCustomer = async (req, res) => {
   }
 };
 
-const deleteCustomer = async (req, res) => {
+export const deleteCustomer = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -79,9 +80,3 @@ const deleteCustomer = async (req, res) => {
   }
 };
 
-module.exports = {
-  createCustomer,
-  getAllCustomer,
-  getSingleCustomer,
-  deleteCustomer,
-};
