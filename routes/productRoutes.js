@@ -4,14 +4,16 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductById,  // ✅ Import the new controller
 } from "../controller/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", authMiddleware, getProducts); // Get product list
-router.post("/", authMiddleware, createProduct); // Create product
-router.put("/:id", authMiddleware, updateProduct); // Edit product
-router.delete("/:id", authMiddleware, deleteProduct); // Delete product
+router.get("/", getProducts); // Get all products
+router.get("/:id", getProductById); // ✅ Get a single product
+router.post("/", createProduct); // Create product
+router.put("/:id", updateProduct); // Edit product
+router.delete("/:id", deleteProduct); // Delete product
 
 export default router;
