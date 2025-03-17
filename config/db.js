@@ -5,7 +5,7 @@ dotenv.config();
 const connectDB = async () => {
   try {
     await connect(
-      "mongodb+srv://instakart:Password@cluster0.bkmgt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+      "mongodb+srv://rajat4984:rajat4984@nodeexpressproject.zv05z.mongodb.net/instakart?retryWrites=true&w=majority&appName=NodeExpressProject"
     );
     console.log("MongoDB Connected...");
   } catch (err) {
