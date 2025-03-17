@@ -5,7 +5,7 @@ import Product from "../models/Product.js";
 // Create Order
 export const createOrder = async (req, res) => {
   try {
-    const { customerId, orderId, products, customerAddress, customerDetails } =
+    const { customerId, orderId, products, customerDetails } =
       req.body;
 
     // Check if orderId is unique
@@ -60,15 +60,12 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ error: "Some products are invalid" });
     }
 
-    // Use provided customer address or fetch from customer
-    const address = customerAddress || customer.addressLine1;
 
     // Create and save the order
     const order = new Order({
       customer: customer._id,
       orderId,
       products,
-      customerAddress: address,
     });
 
     await order.save();
