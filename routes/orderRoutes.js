@@ -1,3 +1,4 @@
+// routes/orderRoutes.js
 import express from "express";
 import {
   createOrder,
@@ -9,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.post("/", createOrder); // Create order
-router.get("/", getAllOrders); // Get all orders
-router.get("/:orderId", getOrderById); // Get order by orderId
-router.put("/:orderId", updateOrder); // Update order
-router.delete("/:orderId", deleteOrder); // Delete order
+router.post("/", createOrder);
+router.get("/", getAllOrders);
+router.get("/:id", getOrderById);
+router.put("/:id", updateOrder);
+router.delete("/:id", deleteOrder);
 
 export default router;
