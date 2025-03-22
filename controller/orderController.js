@@ -5,9 +5,15 @@ import Product from "../models/Product.js";
 
 // Create Order
 export const createOrder = async (req, res) => {
-  console.log(req.body,'eooeeo')
   try {
-    const { customerId, products, customerDetails } = req.body;
+    const {
+      customerId,
+      products,
+      customerDetails,
+      orderId,
+      totalAmount,
+      paymentMethod,
+    } = req.body;
     let customer;
 
     if (customerId) {
@@ -16,14 +22,30 @@ export const createOrder = async (req, res) => {
         return res.status(404).json({ error: "Customer not found" });
       }
     } else if (customerDetails) {
-      const { firstName, mobileNumber, email, addressLine1, addressLine2, pincode } = customerDetails;
+      const {
+        firstName,
+        mobileNumber,
+        email,
+        addressLine1,
+        addressLine2,
+        pincode,
+      } = customerDetails;
       customer = await Customer.findOne({ mobileNumber });
       if (!customer) {
-        customer = new Customer({ firstName, mobileNumber, email, addressLine1, addressLine2, pincode });
+        customer = new Customer({
+          firstName,
+          mobileNumber,
+          email,
+          addressLine1,
+          addressLine2,
+          pincode,
+        });
         await customer.save();
       }
     } else {
-      return res.status(400).json({ error: "Provide either customerId or customerDetails" });
+      return res
+        .status(400)
+        .json({ error: "Provide either customerId or customerDetails" });
     }
 
     const productObjects = await Product.find({ _id: { $in: products } });
@@ -31,7 +53,13 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ error: "Some products are invalid" });
     }
 
-    const order = new Order({ customer: customer._id, products });
+    const order = new Order({
+      customer: customer._id,
+      products,
+      orderId,
+      totalAmount,
+      paymentMethod,
+    });
     await order.save();
     res.status(201).json(order);
   } catch (error) {
@@ -53,7 +81,9 @@ export const getAllOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id).populate("customer").populate("products");
+    const order = await Order.findById(id)
+      .populate("customer")
+      .populate("products");
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
@@ -67,7 +97,7 @@ export const getOrderById = async (req, res) => {
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { products } = req.body;
+    const { products,totalAmount,paymentMethod } = req.body;
 
     if (products) {
       const validProducts = await Product.find({ _id: { $in: products } });
@@ -76,7 +106,11 @@ export const updateOrder = async (req, res) => {
       }
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(id, { products }, { new: true });
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { products,paymentMethod,totalAmount },
+      { new: true }
+    );
     if (!updatedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
@@ -99,3 +133,4 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+

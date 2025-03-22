@@ -5,13 +5,15 @@ import {
   getSingleCustomer,
   getAllCustomer,
   createCustomer,
+  updateCustomer,
 } from "../controller/customerController.js";
-
+ 
 const router = Router();
 
 router.post("/", createCustomer);
 router.get("/", getAllCustomer);
-router.get("/search", getSingleCustomer);
+router.put('/:id',updateCustomer)
+router.get("/getSingleCustomer", getSingleCustomer);
 router.delete("/:id", deleteCustomer);
 
 export default router;
