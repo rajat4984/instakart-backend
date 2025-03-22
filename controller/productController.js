@@ -4,7 +4,7 @@ import Product from "../models/Product.js";
 export const getProducts = async (req, res) => {
   try {
     const products = await Product.find(); // Fetch all products
-    
+
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -12,6 +12,7 @@ export const getProducts = async (req, res) => {
 };
 // 📌 Create a new product
 export const createProduct = async (req, res) => {
+  console.log(req.body,'body')
   try {
     const product = new Product(req.body);
     await product.save();
@@ -51,6 +52,20 @@ export const getProductById = async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });
     res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const searchProducts = async (req, res) => {
+  try {
+    const query = req.query.q;
+    console.log("Searchproductq");
+    console.log(query, "query");
+    const products = await Product.find({
+      title: { $regex: query, $options: "i" },
+    });
+    res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
