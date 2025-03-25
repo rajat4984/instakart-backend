@@ -1,10 +1,5 @@
 import mongoose from "mongoose";
 
-const VariantSchema = new mongoose.Schema({
-  optionName: String,
-  optionValue: String,
-});
-
 const ProductSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -22,7 +17,7 @@ const ProductSchema = new mongoose.Schema(
     length: { type: Number },
     breadth: { type: Number },
     height: { type: Number },
-    variants: { type: [VariantSchema] }, // Array of Objects
+    variants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Variant" }], // Array of ObjectIds referencing Variant model
     tags: { type: [String] },
     quantity: { type: Number, default: 0 },
   },
