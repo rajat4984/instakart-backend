@@ -20,6 +20,7 @@ const ProductSchema = new mongoose.Schema(
     variants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Variant" }], // Array of ObjectIds referencing Variant model
     tags: { type: [String] },
     quantity: { type: Number, default: 0 },
+    categories: { type: [String] },
   },
   { timestamps: true }
 );
