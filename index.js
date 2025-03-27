@@ -5,8 +5,9 @@ import authRoutes from "./routes/authRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import variantRoutes from "./routes/variantRoutes.js"
+import variantRoutes from "./routes/variantRoutes.js";
 import dotenv from "dotenv";
+import authMiddleware from "./middleware/authMiddleware.js";
 
 dotenv.config();
 connectDB();
@@ -19,11 +20,10 @@ app.use(cors());
 app.use(json());
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/variants", variantRoutes);
-app.use("/api/v1/customers", customerRoutes);
-app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/products", authMiddleware, productRoutes);
+app.use("/api/v1/variants", authMiddleware, variantRoutes);
+app.use("/api/v1/customers", authMiddleware, customerRoutes);
+app.use("/api/v1/orders", authMiddleware, orderRoutes);
 
 // Connect to DB
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
- 
