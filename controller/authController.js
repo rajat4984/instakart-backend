@@ -7,7 +7,7 @@ dotenv.config();
 // Signup
 export async function register(req, res) {
   try {
-    const { fullName, email, mobile, password, businessName } = req.body;
+    const { name, email, mobile, password, businessName } = req.body;
 
     if (!email && !mobile) {
       return res.status(400).json({ message: "Email or Mobile is required" });
@@ -18,7 +18,7 @@ export async function register(req, res) {
 
     const hashedPassword = await hash(password, 10);
     user = new User({
-      fullName,
+      name,
       email,
       mobile,
       password: hashedPassword,
