@@ -9,9 +9,10 @@ export const createCustomer = async (req, res) => {
     // Check if mobileNumber already exists
     const existingMobile = await Customer.findOne({ mobileNumber });
     if (existingMobile) {
-      return res.status(200).json({  // Changed status code to 200
+      return res.status(200).json({
+        // Changed status code to 200
         message: "Customer already exists",
-        customer:existingMobile,
+        customer: existingMobile,
       });
     }
 
@@ -19,9 +20,10 @@ export const createCustomer = async (req, res) => {
     if (email) {
       const existingEmail = await Customer.findOne({ email });
       if (existingEmail) {
-        return res.status(200).json({ // Changed status code to 200
+        return res.status(200).json({
+          // Changed status code to 200
           message: "Customer already exists", // Consistent message
-          customer:existingEmail,
+          customer: existingEmail,
         });
       }
     }
@@ -31,7 +33,7 @@ export const createCustomer = async (req, res) => {
     await customer.save();
     res.status(201).json({
       message: "New customer created",
-      customer
+      customer,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -52,7 +54,7 @@ export const getAllCustomer = async (req, res) => {
 export const getSingleCustomer = async (req, res) => {
   try {
     const { identifier } = req.query;
-
+    console.log(identifier, "mobilenumber");
     if (!identifier) {
       return res
         .status(400)
@@ -149,4 +151,3 @@ export const updateCustomer = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-

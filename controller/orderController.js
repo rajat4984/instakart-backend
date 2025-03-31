@@ -14,6 +14,16 @@ export const createOrder = async (req, res) => {
       totalAmount,
       paymentMethod,
     } = req.body;
+
+    console.log(
+      customerId,
+      products,
+      customerDetails,
+      orderId,
+      totalAmount,
+      paymentMethod,
+      "orderorder"
+    );
     let customer;
 
     if (customerId) {
@@ -56,7 +66,7 @@ export const createOrder = async (req, res) => {
     const order = new Order({
       customer: customer._id,
       products,
-      orderId,
+      orderId, // NOTE MAKE AN ORDER ID FIELD IN THE FRONTEND
       totalAmount,
       paymentMethod,
     });
@@ -97,7 +107,7 @@ export const getOrderById = async (req, res) => {
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { products,totalAmount,paymentMethod } = req.body;
+    const { products, totalAmount, paymentMethod } = req.body;
 
     if (products) {
       const validProducts = await Product.find({ _id: { $in: products } });
@@ -108,7 +118,7 @@ export const updateOrder = async (req, res) => {
 
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
-      { products,paymentMethod,totalAmount },
+      { products, paymentMethod, totalAmount },
       { new: true }
     );
     if (!updatedOrder) {
@@ -133,4 +143,3 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
