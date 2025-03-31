@@ -13,8 +13,13 @@ export async function register(req, res) {
       return res.status(400).json({ message: "Email or Mobile is required" });
     }
 
-    let user = await User.findOne({ $or: [{ email }, { mobile }] });
-    if (user) return res.status(400).json({ message: "User already exists" });
+    const emailLower = email?.toLowerCase();
+    let user = await User.findOne({ $or: [{ email: emailLower }, { mobile }] });
+
+    if (user)
+      return res
+        .status(400)
+        .json({ message: "Email or Mobile already exists" });
 
     const hashedPassword = await hash(password, 10);
     user = new User({
