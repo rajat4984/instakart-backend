@@ -7,16 +7,16 @@ const orderSchema = new mongoose.Schema({
   },
   orderId: {
     type: String,
-    // unique: true,   NOTE:make this unique
+    unique: true, // Keep orderId unique
     required: true,
   },
-  paymentMethod:{
-    type:String,
-    required:true
+  paymentMethod: {
+    type: String,
+    required: true,
   },
-  totalAmount:{
-    type:Number,
-    required:true
+  totalAmount: {
+    type: Number,
+    required: true,
   },
   customer: {
     type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +30,11 @@ const orderSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 export default mongoose.model("Order", orderSchema);
