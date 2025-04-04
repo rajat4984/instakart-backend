@@ -11,8 +11,9 @@ export const createOrder = async (req, res) => {
       products,
       customerDetails,
       totalAmount,
-      paymentMethod,
+      paymentForm, // Include paymentForm from request body
     } = req.body;
+
 
     let customer;
 
@@ -55,17 +56,12 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ error: "Some products are invalid" });
     }
 
-    // Generate orderId based on the count of orders
-    const orderCount = await Order.countDocuments();
-    const orderId = `INK00${orderCount + 1}`;
-
     const order = new Order({
       userId: req.user.id, // Associate order with userId
       customer: customer._id,
-      orderId, // Use generated orderId
       products,
       totalAmount,
-      paymentMethod,
+      paymentForm, // Save paymentForm object
     });
     await order.save();
     res.status(201).json(order);
@@ -107,7 +103,7 @@ export const getOrderById = async (req, res) => {
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { products, totalAmount, paymentMethod } = req.body;
+    const { products, totalAmount, paymentForm } = req.body; // Include paymentForm
 
     if (products) {
       const validProducts = await Product.find({ _id: { $in: products } });
@@ -118,7 +114,7 @@ export const updateOrder = async (req, res) => {
 
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
-      { products, paymentMethod, totalAmount },
+      { products, totalAmount, paymentForm }, // Update paymentForm instead of paymentMethod
       { new: true }
     );
     if (!updatedOrder) {

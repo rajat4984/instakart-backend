@@ -5,15 +5,6 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  orderId: {
-    type: String,
-    unique: true, // Keep orderId unique
-    required: true,
-  },
-  paymentMethod: {
-    type: String,
-    required: true,
-  },
   totalAmount: {
     type: Number,
     required: true,
@@ -34,6 +25,25 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  paymentForm: {
+    subTotal: {
+      type: Number,
+      required: true,
+    },
+    totalDiscounts: {
+      type: Number,
+      required: true,
+    },
+    total: {
+      type: Number,
+      required: true,
+    },
+    paymentMethod: {
+      type: String,
+      required: true,
+      enum: ["Cash on Delivery", "Online Payment"], // Restrict to valid options
+    },
   },
 });
 
