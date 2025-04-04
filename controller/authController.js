@@ -72,6 +72,7 @@ export async function login(req, res) {
       token,
       name: user.fullName,
       email: user.email,
+      businessName:user.businessName,
       profilePicture: user.profilePicture,
     });
   } catch (err) {

@@ -10,20 +10,11 @@ export const createOrder = async (req, res) => {
       customerId,
       products,
       customerDetails,
-      orderId,
       totalAmount,
-      paymentMethod,
+      paymentForm, // Include paymentForm from request body
     } = req.body;
 
-    console.log(
-      customerId,
-      products,
-      customerDetails,
-      orderId,
-      totalAmount,
-      paymentMethod,
-      "orderorder"
-    );
+
     let customer;
 
     if (customerId) {
@@ -32,6 +23,7 @@ export const createOrder = async (req, res) => {
         return res.status(404).json({ error: "Customer not found" });
       }
     } else if (customerDetails) {
+      console.log("customerDetails", customerDetails);
       const {
         firstName,
         mobileNumber,
@@ -43,6 +35,7 @@ export const createOrder = async (req, res) => {
       customer = await Customer.findOne({ mobileNumber });
       if (!customer) {
         customer = new Customer({
+          userId: req.user.id,
           firstName,
           mobileNumber,
           email,
@@ -64,15 +57,16 @@ export const createOrder = async (req, res) => {
     }
 
     const order = new Order({
+      userId: req.user.id, // Associate order with userId
       customer: customer._id,
       products,
-      orderId, // NOTE MAKE AN ORDER ID FIELD IN THE FRONTEND
       totalAmount,
-      paymentMethod,
+      paymentForm, // Save paymentForm object
     });
     await order.save();
     res.status(201).json(order);
   } catch (error) {
+    console.error("Error creating order:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -80,7 +74,9 @@ export const createOrder = async (req, res) => {
 // Get all Orders
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("customer").populate("products");
+    const orders = await Order.find({ userId: req.user.id }) // Filter orders by userId
+      .populate("customer")
+      .populate("products");
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -91,7 +87,7 @@ export const getAllOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id)
+    const order = await Order.findOne({ _id: id, userId: req.user.id }) // Ensure order belongs to userId
       .populate("customer")
       .populate("products");
     if (!order) {
@@ -107,7 +103,7 @@ export const getOrderById = async (req, res) => {
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { products, totalAmount, paymentMethod } = req.body;
+    const { products, totalAmount, paymentForm } = req.body; // Include paymentForm
 
     if (products) {
       const validProducts = await Product.find({ _id: { $in: products } });
@@ -118,7 +114,7 @@ export const updateOrder = async (req, res) => {
 
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
-      { products, paymentMethod, totalAmount },
+      { products, totalAmount, paymentForm }, // Update paymentForm instead of paymentMethod
       { new: true }
     );
     if (!updatedOrder) {

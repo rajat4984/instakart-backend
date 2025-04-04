@@ -5,36 +5,36 @@ import Customer from "../models/Customer.js";
 export const createCustomer = async (req, res) => {
   try {
     const { mobileNumber, email } = req.body;
+    const userId = req.user.id;
 
-    // Check if mobileNumber already exists
-    const existingMobile = await Customer.findOne({ mobileNumber });
-    if (existingMobile) {
-      return res.status(200).json({
-        // Changed status code to 200
-        message: "Customer already exists",
-        customer: existingMobile,
+    // Check if mobileNumber already exists for the *specific* user
+    const existingCustomer = await Customer.findOne({
+      userId,
+    mobileNumber,
+    });
+
+    if (existingCustomer) {
+      return res.status(400).json({
+        message: "Mobile number already exists for this user.",
       });
     }
 
-    // Check if email already exists (if provided)
-    if (email) {
-      const existingEmail = await Customer.findOne({ email });
-      if (existingEmail) {
-        return res.status(200).json({
-          // Changed status code to 200
-          message: "Customer already exists", // Consistent message
-          customer: existingEmail,
-        });
-      }
+    // Check if email already exists for the *specific* user.
+    const existingEmailCustomer = await Customer.findOne({
+      userId,
+      email,
+    });
+
+    if (existingEmailCustomer) {
+      return res.status(400).json({
+        message: "Email already exists for this user.",
+      });
     }
 
-    // Create and save the new customer
-    const customer = new Customer(req.body);
+    // Create and save the new customer with userId
+    const customer = new Customer({ ...req.body, userId });
     await customer.save();
-    res.status(201).json({
-      message: "New customer created",
-      customer,
-    });
+    res.status(201).json(customer);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -43,8 +43,12 @@ export const createCustomer = async (req, res) => {
 // Get all customers
 export const getAllCustomer = async (req, res) => {
   try {
-    const customers = await Customer.find();
-    res.json(customers);
+    const userId = req.user.id;
+
+    // Fetch customers matching the userId
+    const customers = await Customer.find({ userId });
+
+    res.status(200).json(customers); // Explicitly set status code
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -54,20 +58,22 @@ export const getAllCustomer = async (req, res) => {
 export const getSingleCustomer = async (req, res) => {
   try {
     const { identifier } = req.query;
-    console.log(identifier, "mobilenumber");
+    const userId = req.user.id;
+
     if (!identifier) {
       return res
         .status(400)
         .json({ message: "Please provide a phone number or email" });
     }
 
-    // Find customer by mobile number or email
+    // Find customer by mobile number or email for the user
     const customer = await Customer.findOne({
+      userId,
       $or: [{ mobileNumber: identifier }, { email: identifier }],
     });
 
     if (!customer) {
-      return res.status(404).json({ message: "Customer not found" });
+      return res.status(400).json({ message: "Customer not found" });
     }
 
     res.status(200).json(customer);
