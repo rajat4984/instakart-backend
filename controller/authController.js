@@ -8,7 +8,6 @@ dotenv.config();
 export async function register(req, res) {
   try {
     const { fullName, email, mobile, password, businessName } = req.body;
-    console.log(req.body,'bodybody')
     if (!email && !mobile) {
       return res.status(400).json({ message: "Email or Mobile is required" });
     }
@@ -63,16 +62,28 @@ export async function login(req, res) {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        businessName: user.businessName,
+        fullName: user.fullName,
+        email: user.email,
+        mobile: user.mobile,
+        city: user.city,
+        country: user.country,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.json({
       message: "Login successful",
       token,
       name: user.fullName,
       email: user.email,
-      businessName:user.businessName,
+      businessName: user.businessName,
       profilePicture: user.profilePicture,
     });
   } catch (err) {
