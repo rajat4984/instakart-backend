@@ -3,9 +3,9 @@ import Product from "../models/Product.js";
 // 📌 Get all products
 export const getProducts = async (req, res) => {
   try {
-    console.log(req.body.businessName.replace('-',' '))
+    console.log(req.body.businessName.replace("-", " "));
     const products = await Product.find({
-      businessName: req.body.businessName.replace('-',' '),
+      businessName: req.body.businessName.replace("-", " "),
     });
     console.log(products);
     res.status(200).json({
@@ -81,7 +81,14 @@ export const searchProducts = async (req, res) => {
       userId: req.user.id, // Filter by userId
       title: { $regex: query, $options: "i" },
     });
-    res.status(200).json(products);
+    
+    res
+      .status(200)
+      .json({
+        products,
+        statusCode: 200,
+        message: "Result fetched successfully!",
+      });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
