@@ -25,7 +25,7 @@ app.use("/api/v1/products", authMiddleware, productRoutes);
 app.use("/api/v1/variants", authMiddleware, variantRoutes);
 app.use("/api/v1/customers", authMiddleware, customerRoutes);
 app.use("/api/v1/orders", authMiddleware, orderRoutes);
-app.use("/api/v1/transactions", authMiddleware, transactionRoutes);
+app.use("/api/v1/transactions", transactionRoutes);
 
 // Connect to DB
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
