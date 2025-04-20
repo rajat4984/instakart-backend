@@ -22,6 +22,7 @@ const ProductSchema = new mongoose.Schema(
     quantity: { type: Number, default: 0 },
     categories: { type: [String] },
     businessName: {type: String},
+    totalPrice : { type: Number },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
