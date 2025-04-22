@@ -134,6 +134,7 @@ export async function updateProfile(req, res) {
   try {
     // 1. Extract the token from the Authorization header
     const authHeader = req.headers.authorization;
+    console.log(req.body, 'bodybody');
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res
         .status(401)
@@ -153,41 +154,37 @@ export async function updateProfile(req, res) {
 
     // 3. Extract the user ID from the decoded token
     const userId = decoded.id;
+    console.log('userId', userId);
 
-    // 4. Find the user by ID
-    const user = await User.findById(userId);
-    if (!user) {
+    let updatePayload = {};
+
+    // 4. Check if bankDetails is present in the request body
+    if (req.body.bankDetails) {
+      updatePayload = { bankDetails: req.body.bankDetails };
+    } else {
+      // If bankDetails is not present, assume other top-level fields are being updated
+      updatePayload = req.body;
+    }
+
+    // 5. Find and update the user
+    const updatedUser = await User.findByIdAndUpdate(userId, updatePayload, {
+      new: true,
+      runValidators: true, // Optional: To run schema validators on update
+    });
+
+    if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 5. Update the user data
-    const {
-      name,
-      email,
-      mobile,
-      businessName,
-      country,
-      city,
-      postalCode,
-      taxId,
-      profileImage,
-    } = req.body;
-
-    //update fields.
-    if (name) user.fullName = name;
-    if (email) user.email = email;
-    if (mobile) user.mobile = mobile;
-    if (businessName) user.businessName = businessName;
-    if (country) user.country = country;
-    if (city) user.city = city;
-    if (postalCode) user.postalCode = postalCode;
-    if (taxId) user.taxId = taxId;
-    if (profileImage) user.profilePicture = profileImage;
-
-    // 6. Save the updated user data
-    await user.save();
-    res.json({ message: "Profile updated successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res
+      .status(200)
+      .json({ message: "Profile updated successfully", user: updatedUser });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: error.errors });
+    }
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 }
