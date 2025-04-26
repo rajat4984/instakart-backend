@@ -60,6 +60,7 @@ export async function login(req, res) {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    
 
     // Generate JWT token
     const token = jwt.sign(
@@ -85,6 +86,7 @@ export async function login(req, res) {
       email: user.email,
       businessName: user.businessName,
       profilePicture: user.profilePicture,
+      type: user.type,
     });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -132,37 +134,34 @@ export async function getProfile(req, res) {
 // Update Profile (Protected)
 export async function updateProfile(req, res) {
   try {
-    // 1. Extract the token from the Authorization header
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized: Missing or invalid token" });
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized: Missing or invalid token" });
     }
-    const token = authHeader.split(" ")[1];
 
-    // 2. Decode the token
+    const token = authHeader.split(" ")[1];
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET); // Use your secret key
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized: Invalid token", error: err.message });
+      return res.status(401).json({ message: "Unauthorized: Invalid token", error: err.message });
     }
 
-    // 3. Extract the user ID from the decoded token
-    const userId = decoded.id;
-
-    // 4. Find the user by ID
-    const user = await User.findById(userId);
+    const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 5. Update the user data
     const {
-      name,
+      name, email, mobile, businessName, country,
+      city, postalCode, taxId, profileImage,
+      bankDetails, documents, BankVerified, documentVerified
+    } = req.body;
+
+
+    console.log(req.body, 'req.body')
+    const fieldsToUpdate = {
+      fullName: name,
       email,
       mobile,
       businessName,
@@ -170,42 +169,72 @@ export async function updateProfile(req, res) {
       city,
       postalCode,
       taxId,
-      profileImage,
-      bankDetails,
-      documents,
-    } = req.body;
+      profilePicture: profileImage,
+      BankVerified,
+      documentVerified
+    };
 
-    // Update fields
-    if (name) user.fullName = name;
-    if (email) user.email = email;
-    if (mobile) user.mobile = mobile;
-    if (businessName) user.businessName = businessName;
-    if (country) user.country = country;
-    if (city) user.city = city;
-    if (postalCode) user.postalCode = postalCode;
-    if (taxId) user.taxId = taxId;
-    if (profileImage) user.profilePicture = profileImage;
-
-    // Update bank details if provided
-    if (bankDetails) {
-      user.bankDetails = {
-        ...user.bankDetails,
-        ...bankDetails,
-      };
+    // Apply basic field updates
+    for (const [key, value] of Object.entries(fieldsToUpdate)) {
+      if (value !== undefined) user[key] = value;
     }
 
-    // Update documents if provided
-    if (documents) {
-      user.documents = {
-        ...user.documents,
-        ...documents,
-      };
-    }
-
-    // 6. Save the updated user data
+    console.log(user, 'pan user')
+    // Merge nested objects
+    if (bankDetails) user.bankDetails = { ...user.bankDetails, ...bankDetails };
+    if (documents) user.documents = { ...user.documents, ...documents };
+    console.log(user, 'user')
     await user.save();
     res.json({ message: "Profile updated successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 }
+
+
+
+export async function getAllUser(req, res) {
+  try {
+    const users = await User.find({}).select("-password");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+
+export async function getUserById(req, res) {
+  try {
+    const { id } = req.params;
+    console.log(id,'idididid')
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+export async function updateUserProfileAdmin(req, res) {
+  try {
+    const { id } = req.params;
+    const { BankVerified,documentVerified } = req.body;
+    const user = await User.findById(id);
+    console.log(user, 'adminuser')
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Update the user profile with the provided data
+    user.BankVerified = BankVerified;
+    user.documentVerified = documentVerified;
+    await user.save();
+    res.status(200).json({ message: "User profile updated successfully" });
+  }
+  catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+
