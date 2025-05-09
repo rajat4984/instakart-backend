@@ -9,6 +9,8 @@ import transactionRoutes from "./routes/transactionRoutes.js";
 import variantRoutes from "./routes/variantRoutes.js";
 import dotenv from "dotenv";
 import authMiddleware from "./middleware/authMiddleware.js";
+import themeRoutes from "./routes/themeRoutes.js";
+import discountRoutes from "./routes/discountRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -26,6 +28,9 @@ app.use("/api/v1/variants", authMiddleware, variantRoutes);
 app.use("/api/v1/customers", authMiddleware, customerRoutes);
 app.use("/api/v1/orders", authMiddleware, orderRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
+app.use("/api/v1/theme", authMiddleware, themeRoutes);
+app.use("/api/v1/discounts", authMiddleware, discountRoutes);
+
 
 // Connect to DB
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
