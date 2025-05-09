@@ -31,5 +31,6 @@ app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/theme", authMiddleware, themeRoutes);
 app.use("/api/v1/discounts", authMiddleware, discountRoutes);
 
+
 // Connect to DB
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
