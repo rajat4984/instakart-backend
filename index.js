@@ -21,7 +21,7 @@ app.use(cors());
 app.use(json());
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/products", authMiddleware, productRoutes);
+app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/variants", authMiddleware, variantRoutes);
 app.use("/api/v1/customers", authMiddleware, customerRoutes);
 app.use("/api/v1/orders", authMiddleware, orderRoutes);
