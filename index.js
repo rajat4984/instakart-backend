@@ -28,7 +28,7 @@ app.use("/api/v1/variants", authMiddleware, variantRoutes);
 app.use("/api/v1/customers", authMiddleware, customerRoutes);
 app.use("/api/v1/orders", authMiddleware, orderRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
-app.use("/api/v1/theme", authMiddleware, themeRoutes);
+app.use("/api/v1/theme", themeRoutes);
 app.use("/api/v1/discounts", authMiddleware, discountRoutes);
 
 

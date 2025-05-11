@@ -1,5 +1,6 @@
 import express from "express";
 import { getTheme, createOrUpdateTheme } from "../controller/themeController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -7,6 +8,6 @@ const router = express.Router();
 router.get("/", getTheme);
 
 // Route to create or update the theme
-router.post("/", createOrUpdateTheme);
+router.post("/", authMiddleware,createOrUpdateTheme);
 
 export default router;

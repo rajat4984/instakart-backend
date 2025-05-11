@@ -237,4 +237,24 @@ export async function updateUserProfileAdmin(req, res) {
   }
 }
 
+export async function getUserByStoreName(req, res) {
+  try {
+    const { storeName } = req.params;
+    console.log(storeName, 'storeName');
+
+    // Find the user by businessName and select only the required fields
+    const user = await User.findOne({ businessName: storeName }).select(
+      "businessName _id BankVerified documentVerified"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
 

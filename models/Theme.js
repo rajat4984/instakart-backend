@@ -15,6 +15,8 @@ const ThemeSchema = new Schema({
     type: {
       primary: { type: String, required: true }, // Primary color
       secondary: { type: String, required: true }, // Secondary color
+      footerColor: { type: String, required: true }, // Footer color
+      navbarColor: { type: String, required: true }, // Navbar color
     },
     required: true,
   },
