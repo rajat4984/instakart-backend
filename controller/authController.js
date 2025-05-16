@@ -83,6 +83,7 @@ export async function login(req, res) {
       message: "Login successful",
       token,
       name: user.fullName,
+      userId: user._id,
       email: user.email,
       businessName: user.businessName,
       profilePicture: user.profilePicture,
@@ -244,7 +245,7 @@ export async function getUserByStoreName(req, res) {
 
     // Find the user by businessName and select only the required fields
     const user = await User.findOne({ businessName: storeName }).select(
-      "businessName _id BankVerified documentVerified"
+      "businessName _id BankVerified documentVerified profilePicture fullName"
     );
 
     if (!user) {

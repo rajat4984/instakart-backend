@@ -1,9 +1,11 @@
 import Product from "../models/Product.js";
 
+
 // 📌 Get all products
 export const getProducts = async (req, res) => {
   try {
-    // console.log(req.body.businessName.replace("-", " "));
+    // console.log(req.body.businessName.replace("-", " "));'
+    console.log(req.body, "productbody");
     const products = await Product.find({
       businessName: req.body.businessName.replace("-", " "),
     });

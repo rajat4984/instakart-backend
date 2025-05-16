@@ -1,12 +1,13 @@
 import Theme from "../models/Theme.js";
 
+
 // Get Theme by User ID
 export const getTheme = async (req, res) => {
-  try {
-    console.log(req.body, 'themebodyyy  v')
-    const userId = req.body.userId; // Assuming `userId` is available in the request object
-    console.log(req.body,'themebody')
+  try { 
+
+    let userId= req.params.userId; // Assuming `userId` is available in the request object
     const theme = await Theme.findOne({ userId });
+    console.log("Theme found:", userId); // Log the found theme for debugging  
     if (!theme) {
       return res.status(404).json({ message: "Theme not found" });
     }

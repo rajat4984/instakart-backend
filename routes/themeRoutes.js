@@ -5,7 +5,7 @@ import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Route to get the theme
-router.get("/", getTheme);
+router.get("/:userId", getTheme);
 
 // Route to create or update the theme
 router.post("/", authMiddleware,createOrUpdateTheme);
