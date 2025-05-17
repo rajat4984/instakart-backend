@@ -17,6 +17,10 @@ const ThemeSchema = new Schema({
       secondary: { type: String, required: true }, // Secondary color
       footerColor: { type: String, required: true }, // Footer color
       navbarColor: { type: String, required: true }, // Navbar color
+      primaryBtnColor: { type: String, required: true }, // Primary button color
+      secondaryBtnColor: { type: String, required: true }, // Secondary button color
+      primaryTextColor: { type: String, required: true }, // Primary text color
+      secondaryTextColor: { type: String, required: true }, // Secondary text color
     },
     required: true,
   },

@@ -1,14 +1,15 @@
 import Product from "../models/Product.js";
 
-
 // 📌 Get all products
 export const getProducts = async (req, res) => {
   try {
-    // console.log(req.body.businessName.replace("-", " "));'
-    console.log(req.body, "productbody");
-    const products = await Product.find({
-      businessName: req.body.businessName.replace("-", " "),
-    });
+    const userType = req.body.userType;
+    const businessName = req.body.businessName.replace("-", " ");
+    let query = { businessName };
+    if (userType === "user") {
+      query.status = "active";
+    }
+    const products = await Product.find(query);
     console.log(products);
     res.status(200).json({
       data: products,
@@ -66,9 +67,7 @@ export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate("variants"); // Populate the variants field
     if (!product) return res.status(404).json({ message: "Product not found" });
-    res
-      .status(200)
-      .json({ message: "Product fetched successfully", product });
+    res.status(200).json({ message: "Product fetched successfully", product });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -83,14 +82,12 @@ export const searchProducts = async (req, res) => {
       userId: req.user.id, // Filter by userId
       title: { $regex: query, $options: "i" },
     });
-    
-    res
-      .status(200)
-      .json({
-        products,
-        statusCode: 200,
-        message: "Result fetched successfully!",
-      });
+
+    res.status(200).json({
+      products,
+      statusCode: 200,
+      message: "Result fetched successfully!",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
