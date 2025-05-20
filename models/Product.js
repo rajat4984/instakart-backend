@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+// Tag model
+const TagSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+});
+export const Tag = mongoose.model("Tag", TagSchema);
+
 const ProductSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -18,11 +29,10 @@ const ProductSchema = new mongoose.Schema(
     breadth: { type: Number },
     height: { type: Number },
     variants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Variant" }], // Array of ObjectIds referencing Variant model
-    tags: { type: [String] },
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }], // Array of ObjectIds referencing Tag model
     quantity: { type: Number, default: 0 },
-    categories: { type: [String] },
-    businessName: {type: String},
-    totalPrice : { type: Number },
+    businessName: { type: String },
+    totalPrice: { type: Number },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

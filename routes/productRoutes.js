@@ -5,7 +5,8 @@ import {
   updateProduct,
   deleteProduct,
   getProductById,
-  searchProducts, // ✅ Import the new controller
+  searchProducts,
+  getTagsByUser, // ✅ Import the new controller
 } from "../controller/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -17,5 +18,6 @@ router.get("/:id", getProductById); // ✅ Get a single product
 router.post("/", authMiddleware,createProduct); // Create product
 router.put("/:id", authMiddleware,updateProduct); // Edit product
 router.delete("/:id",authMiddleware ,deleteProduct); // Delete product
+router.get('/getStoreTags/:userId',getTagsByUser)
 
 export default router;

@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import { Tag } from "../models/Product.js";
 
 // 📌 Get all products
 export const getProducts = async (req, res) => {
@@ -10,7 +11,7 @@ export const getProducts = async (req, res) => {
       query.status = "active";
     }
     const products = await Product.find(query);
-    console.log(products);
+    
     res.status(200).json({
       data: products,
       statusCode: 200,
@@ -24,8 +25,24 @@ export const getProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
   console.log(req.body, "productbody");
   try {
+    // Handle categories as tag names (strings)
+    const categoryNames = req.body.categories || [];
+    const tagIds = [];
+    for (const name of categoryNames) {
+      if (!name || typeof name !== "string") continue;
+      // Find tag case-insensitively and by userId
+      let tag = await Tag.findOne({
+        name: { $regex: `^${name}$`, $options: "i" },
+        userId: req.user.id,
+      });
+      if (!tag) {
+        tag = await Tag.create({ name, userId: req.user.id });
+      }
+      tagIds.push(tag._id);
+    }
     const product = new Product({
       ...req.body,
+      categories: tagIds,
       userId: req.user.id,
       businessName: req.user.businessName,
     });
@@ -88,6 +105,23 @@ export const searchProducts = async (req, res) => {
       statusCode: 200,
       message: "Result fetched successfully!",
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// 📌 Get all tags for a user
+export const getTagsByUser = async (req, res) => {
+  try {
+    // Use req.user.id if authenticated, or req.query.userId for admin access
+    const userId = req.user?.id || req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+    const tags = await Tag.find({ userId });
+    res
+      .status(200)
+      .json({ tags, statusCode: 200, message: "Tags fetched successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
